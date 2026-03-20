@@ -3,225 +3,327 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Smart Pantry Prototype</title>
-
+<title>EverStock | Smart Pantry</title>
 <style>
-/* Device Frame */
-body {
-  font-family: Arial, sans-serif;
-  background: #e0e0e0;
-  height: 100vh;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+ :root {
+   --primary: #004d40;
+   --accent: #00796b;
+   --bg: #fdfdfd;
+   --card-bg: #ffffff;
+   --text: #212121;
+   --muted: #616161;
+   --border: #e0e0e0;
+ }
 
-/* App container */
-#app {
-  background: #f5f5f5;
-  width: 390px;
-  height: 760px;
-  border-radius: 25px;
-  overflow: hidden;
-  box-shadow: 0 0 20px rgba(0,0,0,0.25);
-  position: relative;
-}
+ body {
+   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+   background: #cfd8dc;
+   height: 100vh;
+   margin: 0;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   color: var(--text);
+   overflow: hidden;
+ }
 
-/* Header */
-header {
-  background: #1e1e2f;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  font-size: 20px;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
+ #app-container {
+   background: var(--bg);
+   height: 90vh;
+   max-height: 850px;
+   aspect-ratio: 9 / 18.5;
+   border-radius: 3vh;
+   overflow: hidden;
+   box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+   position: relative;
+   border: 0.8vh solid #212121;
+   display: flex;
+   flex-direction: column;
+ }
 
-/* Screens */
-.screen {
-  display: none;
-  padding: 80px 20px 90px;
-  height: 100%;
-  overflow-y: auto;
-}
+ header {
+   background: var(--primary);
+   color: white;
+   padding: 5vh 20px 2vh;
+   text-align: center;
+   font-weight: 800;
+   font-size: 2.2vh;
+   letter-spacing: 1.5px;
+   flex-shrink: 0;
+ }
 
-.screen.active {
-  display: block;
-  animation: fade 0.2s ease-in;
-}
+ .brand-sub {
+   font-size: 1.2vh;
+   display: block;
+   font-weight: 300;
+   opacity: 0.9;
+   margin-top: 2px;
+ }
 
-@keyframes fade {
-  from { opacity: 0; } to { opacity: 1; }
-}
+ .screen {
+   display: none;
+   padding: 2vh;
+   flex-grow: 1;
+   overflow-y: auto;
+   padding-bottom: 12vh;
+ }
+ .screen.active { display: block; }
 
-/* Cards */
-.card {
-  background: white;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-}
+ h2 { font-size: 2.4vh; margin-bottom: 1.5vh; color: var(--primary); }
 
-/* Progress Bars */
-.bar {
-  background: #ccc;
-  height: 12px;
-  border-radius: 6px;
-  overflow: hidden;
-}
+ .card {
+   background: var(--card-bg);
+   padding: 2vh;
+   margin-bottom: 2vh;
+   border-radius: 1.5vh;
+   box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+   border: 1px solid var(--border);
+ }
 
-.bar-inner {
-  height: 100%;
-  background: linear-gradient(90deg,#4caf50,#77d877);
-}
+ .inventory-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1vh; }
+ .percentage { font-weight: bold; color: var(--accent); font-size: 1.8vh; }
 
-/* Buttons */
-button {
-  width: 100%;
-  background: #4caf50;
-  color: white;
-  font-size: 16px;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  margin-top: 10px;
-}
+ .bar-container { background: #eeeeee; height: 1.2vh; border-radius: 0.6vh; width: 100%; overflow: hidden; }
+ .bar-fill { height: 100%; background: var(--accent); transition: width 0.6s ease; }
+ .low-stock { background: #c62828; }
 
-/* Inputs */
-input, select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #bbb;
-  margin-bottom: 12px;
-}
+ .btn {
+   width: 100%; background: var(--primary); color: white; font-size: 1.6vh; font-weight: 600;
+   padding: 1.5vh; border: none; border-radius: 1.2vh; cursor: pointer; margin-top: 1vh;
+ }
+ .btn-secondary { background: #f5f5f5; color: var(--text); border: 1px solid var(--border); margin-top: 0.5vh; }
 
-/* Navigation */
-nav {
-  background: #fff;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  border-top: 1px solid #ccc;
-}
+ input, select {
+   width: 100%; padding: 1.5vh; border-radius: 1vh; border: 1px solid var(--border);
+   margin-bottom: 1.5vh; font-size: 1.6vh; box-sizing: border-box; background: white;
+ }
 
-nav a {
-  flex: 1;
-  padding: 12px;
-  text-align: center;
-  text-decoration: none;
-  color: #333;
-}
+ .label-sub { font-size: 1.3vh; color: var(--muted); margin-bottom: 0.5vh; display: block; font-weight: 700; }
 
-nav a.active {
-  color: #4caf50;
-  font-weight: bold;
-}
+ nav {
+   background: var(--card-bg); position: absolute; bottom: 0; width: 100%; 
+   display: flex; border-top: 1px solid var(--border); padding-bottom: 3vh;
+   z-index: 20;
+ }
+ nav a {
+   flex: 1; padding: 2vh 0; text-align: center; font-size: 1.2vh;
+   text-decoration: none; color: var(--muted); cursor: pointer;
+ }
+ nav a.active { color: var(--primary); font-weight: bold; }
+
+ .modal {
+   display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+   background: rgba(0,0,0,0.7); z-index: 100; justify-content: center; align-items: center;
+ }
+ .modal-content { background: white; width: 85%; padding: 3vh; border-radius: 3vh; text-align: center; }
 </style>
-
 </head>
 <body>
 
-<div id="app">
+<div id="app-container">
+ <header>
+   EVERSTOCK
+   <span class="brand-sub">ALWAYS IN STOCK</span>
+ </header>
 
-<header>Smart Pantry</header>
+ <div id="dashboard" class="screen active">
+   <h2>Current Inventory</h2>
+   <div class="card">
+     <div class="inventory-row">
+       <span>Chocolate Protein Powder</span>
+       <span class="percentage">65%</span>
+     </div>
+     <div class="bar-container"><div class="bar-fill" style="width: 65%"></div></div>
+   </div>
+   <div class="card">
+     <div class="inventory-row">
+       <span>Wheat Bread</span>
+       <span class="percentage">8%</span>
+     </div>
+     <div class="bar-container"><div class="bar-fill low-stock" style="width: 8%"></div></div>
+     <button class="btn" onclick="openModal('Order Confirmed', 'A new loaf of Wheat Bread has been ordered.')">Approve Reorder</button>
+   </div>
+ </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" class="screen active">
-  <h2>Inventory Dashboard</h2>
+ <div id="add" class="screen">
+   <h2>Add New Item</h2>
+   <p class="label-sub">1. Identify Product</p>
+   <button class="btn btn-secondary" onclick="simulateScan()">Scan Product Barcode</button>
+   <input type="text" id="ws-name" placeholder="Item Name" />
+   <p class="label-sub">2. Hardware Placement</p>
+   <select id="ws-cell">
+     <option value="">Choose Pad Location...</option>
+     <option>Cell 1 (Directly Connected)</option>
+     <option>Cell 2 (Middle Pad)</option>
+     <option>Cell 3 (End Pad)</option>
+   </select>
+   <button class="btn" onclick="finishOnboarding()">Register to EverStock</button>
+ </div>
 
-  <div class="card">
-    <strong>Toilet Paper</strong> <span style="float:right;">75%</span>
-    <div class="bar"><div class="bar-inner" style="width:75%"></div></div>
-  </div>
+ <div id="scales" class="screen">
+   <h2>Pads & Scales</h2>
+   <div class="card">
+     <span class="cell-tag">CELL 1 (First pad after power hub)</span>
+     <h3>Pad Mapping</h3>
+     <select>
+       <option>Protein Powder</option>
+       <option>Protein Bars</option>
+       <option>Bread</option>
+       <option>Cereal</option>
+       <option>Rice</option>
+     </select>
+   </div>
+   <div class="card">
+     <span class="cell-tag">CELL 2</span>
+     <h3>Pad Mapping</h3>
+     <select>
+       <option>Bread</option>
+       <option>Rice</option>
+       <option>Empty Pad</option>
+     </select>
+   </div>
+ </div>
 
-  <div class="card">
-    <strong>Laundry Detergent</strong> <span style="float:right;">40%</span>
-    <div class="bar"><div class="bar-inner" style="width:40%"></div></div>
-  </div>
+ <div id="library" class="screen">
+   <h2>Favorite Brands</h2>
+   
+   <div class="card">
+     <h3>Favorite Bread</h3>
+     <p id="display-bread" style="font-size: 1.5vh; color: var(--muted); margin: 0.5vh 0;">Whole Grain Harvest (24oz)</p>
+     <button class="btn btn-secondary" onclick="openBrandPicker('bread')">Change Bread Brand</button>
+   </div>
 
-  <div class="card">
-    <strong>Trash Bags</strong> <span style="float:right;">20%</span>
-    <div class="bar"><div class="bar-inner" style="width:20%"></div></div>
-  </div>
-</div>
+   <div class="card">
+     <h3>Favorite Protein Bar</h3>
+     <p id="display-protein" style="font-size: 1.5vh; color: var(--muted); margin: 0.5vh 0;">Nature Valley Oats and Honey</p>
+     <button class="btn btn-secondary" onclick="openBrandPicker('protein')">Change Bar Brand</button>
+   </div>
+ </div>
 
-<!-- ADD ITEM -->
-<div id="add" class="screen">
-  <h2>Add New Item</h2>
-  <button onclick="fakeScan()">Scan Barcode</button>
-  <input id="barcode" placeholder="Scanned barcode…" />
-  <input placeholder="Product Name" />
-  <select><option>Cell 1</option><option>Cell 2</option><option>Cell 3</option></select>
-  <button>Add Item</button>
-</div>
+ <div id="settings" class="screen">
+   <h2>System Configuration</h2>
+   <div class="card">
+     <h3>Hardware Status</h3>
+     <p style="font-size: 1.4vh;">Hub Battery: 94%</p>
+     <p style="font-size: 1.4vh;">Connectivity: Active</p>
+   </div>
+   <div class="card">
+     <h3>Daily Inventory Audit</h3>
+     <input type="time" value="03:00" id="audit-time" />
+   </div>
+   <div class="card">
+     <h3>Reorder Logic</h3>
+     <select><option>Manual Approval</option><option>Fully Automated</option></select>
+   </div>
+ </div>
 
-<!-- SCALE CONFIG -->
-<div id="scales" class="screen">
-  <h2>Scale Configuration</h2>
-  <p>Assign pads in wiring order.</p>
+ <nav>
+   <a onclick="navigate('dashboard', this)" class="active">HOME</a>
+   <a onclick="navigate('add', this)">ADD</a>
+   <a onclick="navigate('scales', this)">PADS</a>
+   <a onclick="navigate('library', this)">LIBRARY</a>
+   <a onclick="navigate('settings', this)">CONFIG</a>
+ </nav>
 
-  <div class="card"><label>Cell 1</label><select><option>Pad A</option><option>Pad B</option></select></div>
-  <div class="card"><label>Cell 2</label><select><option>Pad A</option><option>Pad B</option></select></div>
-  <div class="card"><label>Cell 3</label><select><option>Pad A</option><option>Pad B</option></select></div>
-</div>
+ <div id="modal" class="modal">
+   <div class="modal-content">
+     <h3 id="modal-title">Success</h3>
+     <p id="modal-body" style="font-size: 1.6vh; color: var(--muted); margin-bottom: 2vh;"></p>
+     <button class="btn" onclick="closeModal()">Dismiss</button>
+   </div>
+ </div>
 
-<!-- LIBRARY -->
-<div id="library" class="screen">
-  <h2>Essentials Library</h2>
-  <div class="card"><strong>Favorite Toilet Paper</strong><p>UltraSoft MegaRoll</p><button>Edit</button></div>
-  <div class="card"><strong>Favorite Detergent</strong><p>CleanWave Fresh</p><button>Edit</button></div>
-</div>
-
-<!-- SETTINGS -->
-<div id="settings" class="screen">
-  <h2>Settings</h2>
-
-  <div class="card">
-    <h3>Reorder Mode</h3>
-    <select><option>Manual Approval</option><option>Automatic</option></select>
-  </div>
-
-  <div class="card">
-    <h3>Scan Schedule</h3>
-    <input type="time" />
-  </div>
-
-  <div class="card">
-    <h3>Hardware Monitor</h3>
-    <p>Hub Battery: 82%</p>
-    <p>Pad Network: Connected</p>
-  </div>
-</div>
-
-<!-- NAV -->
-<nav>
-  <a class="active" onclick="show('dashboard', this)">Dashboard</a>
-  <a onclick="show('add', this)">Add</a>
-  <a onclick="show('scales', this)">Scales</a>
-  <a onclick="show('library', this)">Library</a>
-  <a onclick="show('settings', this)">Settings</a>
-</nav>
+ <div id="brand-modal" class="modal">
+   <div class="modal-content">
+     <h3 id="brand-modal-header">Select New Brand</h3>
+     <select id="brand-select-dropdown"></select>
+     <button class="btn" onclick="saveBrandSelection()">Save Selection</button>
+     <button class="btn btn-secondary" onclick="closeBrandPicker()">Cancel</button>
+   </div>
+ </div>
 
 </div>
 
 <script>
-function show(id, tab) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-  tab.classList.add('active');
-}
+ let currentCategory = '';
+ const brandOptions = {
+   bread: [
+     "Nature's Own White",
+     "Dave's Killer Bread",
+     "Whole Grain Harvest (24oz)",
+     "Generic House Brand"
+   ],
+   protein: [
+     "Nature Valley Oats and Honey",
+     "Nature Valley Peanut Butter",
+     "Rx Bar",
+     "Clif Bar Chocolate Chip"
+   ]
+ };
 
-function fakeScan() {
-  document.getElementById('barcode').value = "89456300219";
-  alert("📸 Fake barcode scan complete! ");
-}
+ function navigate(id, el) {
+   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+   document.getElementById(id).classList.add('active');
+   document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+   el.classList.add('active');
+ }
+
+ function simulateScan() { 
+   document.getElementById('ws-name').value = "Multigrain Cereal"; 
+   alert("EverStock Scan Successful!"); 
+ }
+
+ function finishOnboarding() {
+   const name = document.getElementById('ws-name').value;
+   if(!name) return alert("Please name your item.");
+   openModal('Onboarding Complete', name + ' is now registered.');
+   navigate('dashboard', document.querySelectorAll('nav a')[0]);
+ }
+
+ function openBrandPicker(category) {
+   currentCategory = category;
+   const dropdown = document.getElementById('brand-select-dropdown');
+   const header = document.getElementById('brand-modal-header');
+   
+   // Clear existing options
+   dropdown.innerHTML = '';
+   
+   // Set Header
+   header.innerText = category === 'bread' ? 'Select Bread Brand' : 'Select Protein Bar';
+   
+   // Populate dynamic options
+   brandOptions[category].forEach(opt => {
+     let el = document.createElement('option');
+     el.textContent = opt;
+     el.value = opt;
+     dropdown.appendChild(el);
+   });
+
+   document.getElementById('brand-modal').style.display = 'flex';
+ }
+
+ function closeBrandPicker() {
+   document.getElementById('brand-modal').style.display = 'none';
+ }
+
+ function saveBrandSelection() {
+   const selectedValue = document.getElementById('brand-select-dropdown').value;
+   const displayId = currentCategory === 'bread' ? 'display-bread' : 'display-protein';
+   
+   document.getElementById(displayId).innerText = selectedValue;
+   closeBrandPicker();
+   openModal('Library Updated', 'Your brand preference has been saved.');
+ }
+
+ function openModal(title, body) {
+   document.getElementById('modal-title').innerText = title;
+   document.getElementById('modal-body').innerText = body;
+   document.getElementById('modal').style.display = 'flex';
+ }
+
+ function closeModal() { 
+   document.getElementById('modal').style.display = 'none'; 
+ }
 </script>
 
 </body>
