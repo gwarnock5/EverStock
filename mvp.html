@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Smart Pantry Prototype</title>
+
+<style>
+/* Device Frame */
+body {
+  font-family: Arial, sans-serif;
+  background: #e0e0e0;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* App container */
+#app {
+  background: #f5f5f5;
+  width: 390px;
+  height: 760px;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0,0,0,0.25);
+  position: relative;
+}
+
+/* Header */
+header {
+  background: #1e1e2f;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 20px;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+/* Screens */
+.screen {
+  display: none;
+  padding: 80px 20px 90px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.screen.active {
+  display: block;
+  animation: fade 0.2s ease-in;
+}
+
+@keyframes fade {
+  from { opacity: 0; } to { opacity: 1; }
+}
+
+/* Cards */
+.card {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Progress Bars */
+.bar {
+  background: #ccc;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg,#4caf50,#77d877);
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  background: #4caf50;
+  color: white;
+  font-size: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* Inputs */
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  margin-bottom: 12px;
+}
+
+/* Navigation */
+nav {
+  background: #fff;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  border-top: 1px solid #ccc;
+}
+
+nav a {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+}
+
+nav a.active {
+  color: #4caf50;
+  font-weight: bold;
+}
+</style>
+
+</head>
+<body>
+
+<div id="app">
+
+<header>Smart Pantry</header>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="screen active">
+  <h2>Inventory Dashboard</h2>
+
+  <div class="card">
+    <strong>Toilet Paper</strong> <span style="float:right;">75%</span>
+    <div class="bar"><div class="bar-inner" style="width:75%"></div></div>
+  </div>
+
+  <div class="card">
+    <strong>Laundry Detergent</strong> <span style="float:right;">40%</span>
+    <div class="bar"><div class="bar-inner" style="width:40%"></div></div>
+  </div>
+
+  <div class="card">
+    <strong>Trash Bags</strong> <span style="float:right;">20%</span>
+    <div class="bar"><div class="bar-inner" style="width:20%"></div></div>
+  </div>
+</div>
+
+<!-- ADD ITEM -->
+<div id="add" class="screen">
+  <h2>Add New Item</h2>
+  <button onclick="fakeScan()">Scan Barcode</button>
+  <input id="barcode" placeholder="Scanned barcode…" />
+  <input placeholder="Product Name" />
+  <select><option>Cell 1</option><option>Cell 2</option><option>Cell 3</option></select>
+  <button>Add Item</button>
+</div>
+
+<!-- SCALE CONFIG -->
+<div id="scales" class="screen">
+  <h2>Scale Configuration</h2>
+  <p>Assign pads in wiring order.</p>
+
+  <div class="card"><label>Cell 1</label><select><option>Pad A</option><option>Pad B</option></select></div>
+  <div class="card"><label>Cell 2</label><select><option>Pad A</option><option>Pad B</option></select></div>
+  <div class="card"><label>Cell 3</label><select><option>Pad A</option><option>Pad B</option></select></div>
+</div>
+
+<!-- LIBRARY -->
+<div id="library" class="screen">
+  <h2>Essentials Library</h2>
+  <div class="card"><strong>Favorite Toilet Paper</strong><p>UltraSoft MegaRoll</p><button>Edit</button></div>
+  <div class="card"><strong>Favorite Detergent</strong><p>CleanWave Fresh</p><button>Edit</button></div>
+</div>
+
+<!-- SETTINGS -->
+<div id="settings" class="screen">
+  <h2>Settings</h2>
+
+  <div class="card">
+    <h3>Reorder Mode</h3>
+    <select><option>Manual Approval</option><option>Automatic</option></select>
+  </div>
+
+  <div class="card">
+    <h3>Scan Schedule</h3>
+    <input type="time" />
+  </div>
+
+  <div class="card">
+    <h3>Hardware Monitor</h3>
+    <p>Hub Battery: 82%</p>
+    <p>Pad Network: Connected</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="active" onclick="show('dashboard', this)">Dashboard</a>
+  <a onclick="show('add', this)">Add</a>
+  <a onclick="show('scales', this)">Scales</a>
+  <a onclick="show('library', this)">Library</a>
+  <a onclick="show('settings', this)">Settings</a>
+</nav>
+
+</div>
+
+<script>
+function show(id, tab) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  tab.classList.add('active');
+}
+
+function fakeScan() {
+  document.getElementById('barcode').value = "89456300219";
+  alert("📸 Fake barcode scan complete!");
+}
+</script>
+
+</body>
+</html>
